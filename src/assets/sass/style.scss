@@ -1,0 +1,92 @@
+//
+// Theme style
+//
+
+// Initialize
+@import "init";
+
+// Components
+@import "./core/components/components";
+@import "components/components";
+
+// Layout
+@import "./core/layout/base/layout";
+@import "layout/layout";
+
+// custom style for scrollbar
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #f1f1f121;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #0960a252;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #1e6da9;
+}
+
+/* Track */
+::-webkit-scrollbar-track:hover {
+    background: #f1f1f12b;
+}
+
+[data-bs-theme="dark"] .multiselect {
+    background: none !important;
+    background-color: var(--bs-gray-100) !important;
+}
+
+[data-bs-theme="dark"] input.multiselect-tags-search {
+    background: none !important;
+    background-color: var(--bs-gray-100) !important;
+    color: white !important;
+}
+
+.multiselect-search input{
+    background: none !important;
+}
+[data-bs-theme="dark"] .multiselect-search input{
+    color: white !important;
+}
+input.multiselect-search{
+    background: none !important;
+    background-color: var(--bs-gray-100) !important;
+}
+[data-bs-theme="dark"] input.multiselect-search {
+    color: white !important;
+}
+
+[data-bs-theme="dark"] .multiselect-clear {
+    background: none !important;
+    background-color: var(--bs-gray-100) !important;
+}
+
+[data-bs-theme="dark"] .multiselect-options {
+    background: #1e1e2d !important;
+}
+
+[data-bs-theme="dark"] .multiselect-options .multiselect-option {
+    color: rgb(217, 216, 216) !important;
+}
+
+[data-bs-theme="dark"] .multiselect-options .multiselect-option:hover {
+    background: rgb(50, 50, 69) !important;
+    color: rgb(217, 216, 216) !important;
+}
+.is-disabled .multiselect-input {
+    cursor: not-allowed !important;
+}
+[data-bs-theme="dark"] .is-disabled .multiselect-input {
+    background: #34343e !important;
+}
+[data-bs-theme="dark"] .multiselect-option.is-pointed {
+    background: rgb(50, 50, 69) !important;
+    color: rgb(217, 216, 216) !important;
+}
