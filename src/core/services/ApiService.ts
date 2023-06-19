@@ -100,6 +100,13 @@ class ApiService {
   public static delete(resource: string): Promise<AxiosResponse> {
     return ApiService.vueInstance.axios.delete(resource);
   }
+
+  public static getExcel(
+    resource: string,
+    slug = "" as string
+  ): Promise<AxiosResponse> {
+    return ApiService.vueInstance.axios({url: `${resource}/${slug}`, method: 'GET', responseType: 'arraybuffer'});
+  }//blob
 }
 
 export default ApiService;

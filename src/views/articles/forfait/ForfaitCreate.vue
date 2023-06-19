@@ -35,6 +35,60 @@
             <span>Save </span>
           </button>
         </div>
+        <div class="p-1">
+          <button
+            v-if="isLoading"
+            type="button"
+            class="btn btn-success btn-sm"
+            data-kt-indicator="on"
+          >
+            <span class="indicator-label">Import Excel</span>
+            <span class="indicator-progress">
+              Please wait...
+              <span
+                class="spinner-border spinner-border-sm align-middle ms-2"
+              ></span>
+            </span>
+          </button>
+          <button v-else type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdropImportExcel">Import Excel</button>
+        </div>
+        <div class="p-1">
+          <button
+            v-if="isLoading || loadingDataCar"
+            type="button"
+            class="btn btn-success btn-sm"
+            data-kt-indicator="on"
+          >
+            <span class="indicator-label">Export Excel</span>
+            <span class="indicator-progress">
+              Please wait...
+              <span
+                class="spinner-border spinner-border-sm align-middle ms-2"
+              ></span>
+            </span>
+          </button>
+
+          <button v-else type="button" class="btn btn-sm btn-primary" @click="exportExcelFile">Export Excel</button>
+        </div>
+
+        <div class="p-1">
+          <button
+            v-if="isLoading"
+            type="button"
+            class="btn btn-success btn-sm"
+            data-kt-indicator="on"
+          >
+            <span class="indicator-label">Send Email</span>
+            <span class="indicator-progress">
+              Please wait...
+              <span
+                class="spinner-border spinner-border-sm align-middle ms-2"
+              ></span>
+            </span>
+          </button>
+
+          <button v-else type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdropSendEmail">Send Email</button>
+        </div>
       </div>
     </div>
     <div v-if="isLoading">
@@ -319,6 +373,169 @@
         </div>
       </div>
       <!-- end:: modal datacar -->
+
+      <!-- begin:: modal Import Excel -->
+      <div v-on:hide="closeModal" class="modal fade" id="staticBackdropImportExcel" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropImportExcelLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="staticBackdropImportExcelLabel">Import Excel</h5>
+              <button @click="onCloseModal" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <!--begin::Input group Brand-->
+              <div class="col mb-5">
+                <span
+                  v-if="loadingModels"
+                  class="spinner-border spinner-border-sm align-middle ms-2"
+                ></span>
+                <input type="file" class="form-control form-control-sm form-control-solid" id="upload_excel" ref="upload_excel" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" @change="addExcelFile" required>
+              </div>
+              <!--end::Input group Brand-->
+              <div class="col mb-5">
+                <span v-if="excelFileProblem">
+                  <p class="alert alert-warning">{{excelFileErrorMessage}}</p>
+                </span>
+              </div>
+
+            </div>
+            <div class="modal-footer">
+              <button  @click="onCloseModal" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button :disabled="loadingDataCar" @click="sendExcelFile" type="button" class="btn btn-primary">
+                <span v-if="loadingDataCar">
+                  Please wait...
+                  <span
+                    class="spinner-border spinner-border-sm align-middle ms-2"
+                  ></span>
+                </span>
+                <span v-else >Save</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- end:: modal Import Excel -->
+
+      <!-- begin:: modal Send Email -->
+      <div v-on:hide="closeModal" class="modal fade" id="staticBackdropSendEmail" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropSendEmailLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="staticBackdropImportExcelLabel">Envoyer un mail</h5>
+              <button @click="onCloseModal" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <!--begin::Input group objet-->
+              <div class="col mb-5">
+                <span
+                  v-if="loadingModels"
+                  class="spinner-border spinner-border-sm align-middle ms-2"
+                ></span>
+                <label class="form-label fs-7 fw-bold text-dark required">Objet</label>
+                <!--end::Label-->
+                <!--begin::Input-->
+                <Field
+                  tabindex="1"
+                  class="form-control form-control-sm form-control-solid"
+                  type="text"
+                  name="objet"
+                  placeholder="Le titre du mail"
+                  v-model="email.objet"
+                />
+              </div>
+              <div class="fv-plugins-message-container">
+                <div class="fv-help-block">
+                  <ErrorMessage name="objet" />
+                </div>
+              </div>
+              <!--end::Input group objet-->
+
+              <!--begin::Input group contenu-->
+              <div class="col mb-5">
+                <span
+                  v-if="loadingModels"
+                  class="spinner-border spinner-border-sm align-middle ms-2"
+                ></span>
+                <label class="form-label fs-7 fw-bold text-dark required">Contenu de l'email</label>
+                <!--end::Label-->
+                <!--begin::Input-->
+                <Field 
+                  as="textarea" 
+                  name="contenu" 
+                  class="form-control form-control-sm form-control-solid"
+                  id="contenu" 
+                  cols="30" 
+                  rows="10"
+                  v-model="email.contenu"
+                />
+              </div>
+              <div class="fv-plugins-message-container">
+                <div class="fv-help-block">
+                  <ErrorMessage name="contenu" />
+                </div>
+              </div>
+              <!--end::Input group contenu-->
+
+              <!--begin::Input group destinataire-->
+              <div class="col mb-5">
+                <span
+                  v-if="loadingModels"
+                  class="spinner-border spinner-border-sm align-middle ms-2"
+                ></span>
+                <label class="form-label fs-7 fw-bold text-dark required">Envois vers</label>
+                <!--end::Label-->
+                <!--begin::Input-->
+                <Field 
+                  tabindex="1"
+                  class="form-control form-control-sm form-control-solid"
+                  type="text"
+                  name="destinataire"
+                  placeholder="Entrez une adresse mail"
+                  v-model="email.destinataire"
+                />
+              </div>
+              <div class="fv-plugins-message-container">
+                <div class="fv-help-block">
+                  <ErrorMessage name="destinataire" />
+                </div>
+              </div>
+              <!--end::Input group destinataire-->
+
+              <!--begin::Input group piece jointe-->
+              <div class="col mb-5">
+                <span
+                  v-if="loadingModels"
+                  class="spinner-border spinner-border-sm align-middle ms-2"
+                ></span>
+                <label class="form-label fs-7 fw-bold text-dark">Pièce jointe </label>
+                <!--end::Label-->
+                <!--begin::Input-->
+                <input type="file" class="form-control form-control-sm form-control-solid" id="piece_jointe" ref="piece_jointe" @change="ajouterPieceJointe">
+              </div>
+              <!--end::Input group piece jointe-->
+              <div class="col mb-5">
+                <span v-if="email.emailFieldsProblem">
+                  <p class="alert alert-warning">{{email.emailFieldsErrorMessage}}</p>
+                </span>
+              </div>
+
+            </div>
+            <div class="modal-footer">
+              <button  @click="onCloseModal" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button :disabled="loadingDataCar" @click="sendEmail" type="button" class="btn btn-primary">
+                <span v-if="loadingDataCar">
+                  Please wait...
+                  <span
+                    class="spinner-border spinner-border-sm align-middle ms-2"
+                  ></span>
+                </span>
+                <span v-else >Save</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- end:: modal Send Email -->
     </div>
   </VForm>
   <!--end::Form-->
@@ -337,6 +554,7 @@ import $ from "jquery";
 $.noConflict();
 import { Modal } from 'bootstrap';
 import { getAssetPath } from "@/core/helpers/assets";
+import axios from 'axios';
 
 export default defineComponent({
   components: {
@@ -387,12 +605,153 @@ export default defineComponent({
         sub_nature_id: false,
         datacar: false,
       },
+
+      excelFile: null,
+      excelFileProblem: false,
+      excelFileErrorMessage: '',
+
+      email: {
+        objet: '',
+        contenu: '',
+        destinataire: '',
+        piece_jointe: '',
+        emailFieldsProblem: false,
+        emailFieldsErrorMessage: '',
+      }
     };
   },
   computed: {
   },
 
   methods: {
+    addExcelFile(e){
+      this.excelFile = e.target.files[0];
+      this.excelFileProblem = false;
+
+      let validExts = new Array(".xlsx", ".xls", ".csv");
+      let fileExt = this.excelFile;
+      fileExt = String(fileExt);
+      fileExt = fileExt.substring(fileExt.lastIndexOf('.'));
+      if(validExts.indexOf(fileExt) < 0){
+        this.excelFileProblem = true;
+        this.excelFileErrorMessage = "Fichier non valide sélectionné, les fichiers valides sont les suivants '.xlsx', '.xls', '.csv'";
+        setTimeout(() => {
+          this.excelFileProblem = false;
+          document.getElementById('upload_excel').value = "";
+          //e.target.files[0] = '';
+          this.excelFile = ''
+        }, 3000);
+      }
+    },
+    sendExcelFile(){
+      this.loadingDataCar = true;
+      if(this.excelFile !== null){
+        let excelFileData = new FormData();
+        excelFileData.append('upload_excel',this.excelFile)
+        return ApiService.post("forfaits/importExcelForfait", excelFileData).then(({data}) => {
+          this.loadingDataCar = false;
+          this.closeModal('staticBackdropImportExcel');
+          Swal.fire({
+            position: "top-end",
+            icon: "success",
+            title: data.message,
+            showConfirmButton: false,
+            timer: 1500,
+          });
+          this.excelFile = null;
+          document.getElementById('upload_excel').value = "";
+        }).catch(({error}) => {
+          this.loadingDataCar = false;
+          this.excelFile = null;
+          console.log(error);
+          document.getElementById('upload_excel').value = "";
+        });
+      }else{
+        this.loadingDataCar = false;
+        this.excelFileProblem = true;
+        this.excelFileErrorMessage = 'Veuillez insérer le fichier Excel avant de le soumettre';
+        setTimeout(() => {
+          this.excelFileProblem = false;
+          this.excelFileErrorMessage = '';
+        }, 3000);
+      }
+    },
+    exportExcelFile(){
+      this.loadingDataCar = true;
+      //return axios({url: "forfaits/exportExcelForfait", method: 'GET', responseType: 'blob'});  ApiService.vueInstance.axios({url: "forfaits/exportExcelForfait", method: 'GET', responseType: 'blob'})
+      return ApiService.getExcel("forfaits/exportExcelForfait").then(({data}) => {
+        console.log(data);
+        let fileURL = window.URL.createObjectURL(new Blob([data], {type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}));
+        let fileLink = document.createElement('a');
+        fileLink.href = fileURL;
+        fileLink.setAttribute('download', 'forfaits.xlsx');
+        document.body.appendChild(fileLink);
+        fileLink.click();
+        this.loadingDataCar = false;
+        Swal.fire({
+          position: "top-end",
+          icon: "success",
+          title: "Succeded to export excel file",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      }).catch(({error}) => {
+        this.loadingDataCar = false;
+        console.log(error);
+        Swal.fire({
+          position: "top-end",
+          icon: "error",
+          title: "Fail to export excel file",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      });
+    },
+    ajouterPieceJointe(e){
+      this.email.piece_jointe = e.target.files[0];
+    },
+    sendEmail(){
+      if(this.email.objet && this.email.contenu && this.email.destinataire){
+        this.loadingDataCar = true;
+        const email = new FormData();
+        email.append('objet', this.email.objet);
+        email.append('contenu', this.email.contenu);
+        email.append('destinataire', this.email.destinataire);
+        if(this.email.piece_jointe){
+          email.append('piece_jointe', this.email.piece_jointe);
+        }else{
+          email.append('piece_jointe', null);
+        }
+        return ApiService.post("forfaits/sendEmailForfait", email).then(({data}) => {
+          this.loadingDataCar = false;
+          this.closeModal('staticBackdropSendEmail');
+          Swal.fire({
+            position: "top-end",
+            icon: "success",
+            title: data.message,
+            showConfirmButton: false,
+            timer: 1500,
+          });
+          this.email.objet = '';
+          this.email.contenu = '';
+          this.email.destinataire = '';
+          document.getElementById('piece_jointe').value = "";
+
+        }).catch(({error}) => {
+          this.loadingDataCar = false;
+          console.log(error);
+          document.getElementById('piece_jointe').value = "";
+        });
+      }else{
+        console.log("Insert the field");
+        this.email.emailFieldsProblem = true;
+        this.email.emailFieldsErrorMessage = 'Veuillez insérer toutes les champs obligatoires "*" avant de le soumettre';
+        setTimeout(() => {
+          this.email.emailFieldsProblem = false;
+        this.email.emailFieldsErrorMessage = '';
+        }, 3000);
+      }
+    },
     isObjectEmpty(obj) {
       return Object.keys(obj).length === 0;
     },
@@ -400,6 +759,8 @@ export default defineComponent({
       const modal = document.getElementById(idModal);
       const modalInstance = Modal.getInstance(modal);
       modalInstance.hide();
+      document.getElementById('upload_excel').value = "";
+      this.excelFile = ''
     },
     getNatures(){
       return ApiService.get("forfaits/get_list_nature")
@@ -620,6 +981,9 @@ export default defineComponent({
       this.rulesForm = Yup.object().shape({
         name: Yup.string().required().label("Registration car"),
         price: Yup.number().required().label("Chassis no"),
+        objet: Yup.string().required().label("Objet"),
+        contenu: Yup.string().required().label("Contenu de l'email"),
+        destinataire: Yup.string().required().email().label("Envois vers"),
       })
     } catch (error) {
       console.error(error)
