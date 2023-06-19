@@ -736,11 +736,12 @@ export default defineComponent({
           this.email.contenu = '';
           this.email.destinataire = '';
           document.getElementById('piece_jointe').value = "";
-
+          this.email.piece_jointe = '';
         }).catch(({error}) => {
           this.loadingDataCar = false;
           console.log(error);
           document.getElementById('piece_jointe').value = "";
+          this.email.piece_jointe = '';
         });
       }else{
         console.log("Insert the field");
