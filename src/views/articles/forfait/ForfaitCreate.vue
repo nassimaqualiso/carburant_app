@@ -510,7 +510,7 @@
                 <label class="form-label fs-7 fw-bold text-dark">Pièce jointe </label>
                 <!--end::Label-->
                 <!--begin::Input-->
-                <input type="file" class="form-control form-control-sm form-control-solid" id="piece_jointe" ref="piece_jointe" @change="ajouterPieceJointe">
+                <input type="file" class="form-control form-control-sm form-control-solid" id="piece_jointe" ref="piece_jointe" multiple @change="ajouterPieceJointe">
               </div>
               <!--end::Input group piece jointe-->
               <div class="col mb-5">
@@ -614,7 +614,7 @@ export default defineComponent({
         objet: '',
         contenu: '',
         destinataire: '',
-        piece_jointe: '',
+        piece_jointe: [],
         emailFieldsProblem: false,
         emailFieldsErrorMessage: '',
       }
@@ -708,7 +708,14 @@ export default defineComponent({
       });
     },
     ajouterPieceJointe(e){
-      this.email.piece_jointe = e.target.files[0];
+      // this.email.piece_jointe = e.target.files[0];
+
+      let selectedFiles=e.target.files;
+      if(!selectedFiles.length){  return false; }
+      for(let i=0;i<selectedFiles.length;i++){
+          this.email.piece_jointe.push(selectedFiles[i]);
+      }
+      console.log(this.email.piece_jointe);
     },
     sendEmail(){
       if(this.email.objet && this.email.contenu && this.email.destinataire){
@@ -718,7 +725,11 @@ export default defineComponent({
         email.append('contenu', this.email.contenu);
         email.append('destinataire', this.email.destinataire);
         if(this.email.piece_jointe){
-          email.append('piece_jointe', this.email.piece_jointe);
+          // email.append('piece_jointe', this.email.piece_jointe);
+
+          for(let i=0; i<this.email.piece_jointe.length;i++){
+            email.append('piece_jointe[]',this.email.piece_jointe[i]);
+          }
         }else{
           email.append('piece_jointe', null);
         }
@@ -735,13 +746,13 @@ export default defineComponent({
           this.email.objet = '';
           this.email.contenu = '';
           this.email.destinataire = '';
-          document.getElementById('piece_jointe').value = "";
-          this.email.piece_jointe = '';
+          document.getElementById('piece_jointe').value = [];
+          this.email.piece_jointe.length = 0;
         }).catch(({error}) => {
           this.loadingDataCar = false;
           console.log(error);
-          document.getElementById('piece_jointe').value = "";
-          this.email.piece_jointe = '';
+          document.getElementById('piece_jointe').value = [];
+          this.email.piece_jointe = [];
         });
       }else{
         console.log("Insert the field");
@@ -790,6 +801,11 @@ export default defineComponent({
     },
     onCloseModal(){
       this.brandValue = null;
+      this.email.objet = '';
+      this.email.contenu = '';
+      this.email.destinataire = '';
+      document.getElementById('piece_jointe').value = [];
+      this.email.piece_jointe.length = 0;
     },
     saveDataCar(){
       if(

@@ -165,6 +165,40 @@ const routes: Array<RouteRecordRaw> = [
           },
         ],
       },
+
+      {
+        path: "/articles/calendar_event",
+        name: "calendar_event",
+        component: () => import("@/views/articles/calendar_event/CalendarPage.vue"),
+        meta: {
+          pageTitle: "Calendar event",
+          breadcrumbs: ["Listing"],
+        },
+        //========================//
+
+        children: [
+          {
+            path: "",
+            name: "calendar.listing",
+            component: () =>
+              import("@/views/articles/calendar_event/CalendarListing.vue"),
+          },
+          /*{
+            path: "create",
+            name: "calendar.create",
+            component: () =>
+              import ("@/views/articles/forfait/ForfaitCreate.vue"),
+          },
+          {
+            path: ":id/edit",
+            name: "calendar.update",
+            component: () =>
+              import ("@/views/articles/forfait/ForfaitUpdate.vue"),
+            props: true,
+          },*/
+        ],
+      },
+
       {
         path: "/articles/sale_prices",
         name: "sale_prices",

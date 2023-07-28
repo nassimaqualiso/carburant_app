@@ -51,6 +51,12 @@ const MainMenuConfig: Array<MenuItem> = [
     route: "/articles",
     pages: [
       {
+        heading: "Calendar Event",
+        route: "/articles/calendar_event",
+        svgIcon: getAssetPath("media/icons/duotune/general/gen014.svg"),
+        fontIcon: "bi bi-box-fill",
+      },
+      {
         heading: "Products",
         route: "/articles/products",
         svgIcon: getAssetPath("media/icons/duotune/general/gen014.svg"),
